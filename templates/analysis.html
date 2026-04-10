@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: "Roboto", sans-serif; color: #333; background: linear-gradient(120deg, rgba(41,128,185,0.2), rgba(46,204,113,0.2)), url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=2069&auto=format&fit=crop') center/cover fixed no-repeat; min-height: 100vh; position: relative; }
+      body::before { content:""; position: fixed; inset:0; background: rgba(0,0,0,0.4); z-index:0; pointer-events:none; }
+      .navbar { background-color: #2c3e50; padding: 1rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+      .navbar-container { display: flex; justify-content: space-between; align-items: center; }
+      .navbar-logo { color: white; font-size: 1.8rem; font-weight: bold; text-decoration: none; }
+      .navbar-links { list-style: none; display: flex; }
+      .navbar-links li { margin-left: 2rem; }
+      .navbar-links li a { color: white; text-decoration: none; font-size: 1.1rem; }
+      .navbar-links li a:hover { color: #3498db; }
+      .container { max-width: 1100px; margin: 3rem auto; background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: fadeIn .8s ease both; position: relative; z-index: 1; }
+      h1 { font-size: 2rem; color: #2c3e50; margin-bottom: 1rem; }
+      .summary { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+      .card { flex: 1 1 200px; background: #f4f6f8; padding: 1rem; border-radius: 8px; }
+      .muted { color: #666; font-size: .95rem; word-break: break-all; }
+      table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+      th, td { padding: .75rem; border-bottom: 1px solid #eaecef; text-align: left; vertical-align: top; }
+      th { background: #f8fafc; }
+      .badge { display: inline-block; padding: .25rem .5rem; border-radius: 4px; font-size: .85rem; font-weight: 700; }
+      .fake { background: #fdecea; color: #b71c1c; }
+      .genuine { background: #e8f5e9; color: #1b5e20; }
+      .actions { margin-top: 1rem; }
+      .button { display: inline-block; padding: .6rem 1rem; background: #2980b9; color: #fff; border-radius: 6px; text-decoration: none; transition: transform .2s; }
+      .button:hover { background: #3498db; transform: translateY(-2px); }
+      pre { white-space: pre-wrap; word-wrap: break-word; background:#f8fafc; padding: .75rem; border-radius: 6px; }
+      footer { background: rgba(52, 73, 94, 0.9); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity:1; transform: translateY(0);} }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="navbar-container">
+          <a href="/" class="navbar-logo">Fake Review Detector</a>
+          <ul class="navbar-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/form">Submit Review</a></li>
+            <li><a href="/analyze">Analyze URL</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <h1>Analysis Results</h1>
+      <div class="muted">URL: {{ url }}</div>
+      <div class="summary">
+        <div class="card"><strong>Total Reviews</strong><div>{{ summary.total }}</div></div>
+        <div class="card"><strong>FAKE</strong><div>{{ summary.fake }} ({{ summary.fake_pct }}%)</div></div>
+        <div class="card"><strong>GENUINE</strong><div>{{ summary.genuine }} ({{ summary.genuine_pct }}%)</div></div>
+      </div>
+
+      <div class="actions">
+        <a href="/analyze" class="button">Analyze another URL</a>
+      </div>
+
+      {% if error_message %}
+      <div style="margin-top: 1rem; padding: .8rem 1rem; border-radius: 6px; background: #fff7e6; color: #8a6d1d; border: 1px solid #f5e6a1;">
+        {{ error_message }}
+      </div>
+      {% endif %}
+
+      <table>
+        <thead>
+          <tr>
+            <th>Prediction</th>
+            <th>Sentiment</th>
+            <th>Text</th>
+            <th>Length/Counts</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in results %}
+          <tr>
+            <td>
+              {% if r.prediction == 'FAKE' %}
+                <span class="badge fake">FAKE</span>
+              {% else %}
+                <span class="badge genuine">GENUINE</span>
+              {% endif %}
+            </td>
+            <td>
+              score: {{ r.sentiment_score }}<br />
+              label: {{ r.encoded_sentimentLabel }}
+            </td>
+            <td style="max-width: 500px;">
+              <div style="font-weight:700; margin-bottom:.25rem;">Original</div>
+              <div>{{ r.text }}</div>
+              <div style="font-weight:700; margin:.5rem 0 .25rem;">Cleaned</div>
+              <div>{{ r.cleaned }}</div>
+            </td>
+            <td style="max-width: 300px;">
+              <div>len: {{ r.reviewLength }}</div>
+              <div>wc: {{ r.wordCount }}</div>
+              <div>awl: {{ r.avgWordLength }}</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+  </html>
+
+

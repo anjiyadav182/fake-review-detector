@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyze Product URL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: "Roboto", sans-serif; color: #333; background: linear-gradient(120deg, rgba(41,128,185,0.2), rgba(46,204,113,0.2)), url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=2069&auto=format&fit=crop') center/cover fixed no-repeat; min-height: 100vh; }
+      .navbar { background-color: #2c3e50; padding: 1rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+      .navbar-container { display: flex; justify-content: space-between; align-items: center; }
+      .navbar-logo { color: white; font-size: 1.8rem; font-weight: bold; text-decoration: none; }
+      .navbar-links { list-style: none; display: flex; }
+      .navbar-links li { margin-left: 2rem; }
+      .navbar-links li a { color: white; text-decoration: none; font-size: 1.1rem; }
+      .navbar-links li a:hover { color: #3498db; }
+      .container { max-width: 800px; margin: 3rem auto; background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: fadeIn .8s ease both; }
+      h1 { font-size: 2rem; color: #2c3e50; margin-bottom: 1rem; text-align: center; }
+      label { display: block; margin: 1rem 0 0.5rem; color: #34495e; }
+      input, button { width: 100%; padding: 0.8rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; }
+      input:focus { outline: none; border-color: #2980b9; box-shadow: 0 0 5px rgba(41,128,185,0.3); }
+      button { background: #2980b9; color: #fff; border: none; margin-top: 1rem; cursor: pointer; transition: all .2s; }
+      button:hover { background: #3498db; }
+      footer { background: rgba(52, 73, 94, 0.9); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem; }
+      @media (max-width: 768px) { .navbar-container { flex-direction: column; align-items: flex-start; } .navbar-links { flex-direction: column; margin-top: 1rem; } .navbar-links li { margin: .5rem 0; } }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity:1; transform: translateY(0);} }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="navbar-container">
+          <a href="/" class="navbar-logo">Fake Review Detector</a>
+          <ul class="navbar-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/form">Submit Review</a></li>
+            <li><a href="/analyze">Analyze URL</a></li>
+            {% if current_user.is_authenticated %}
+              {% if current_user.role == 'admin' %}
+                <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+              {% endif %}
+              <li><a href="/logout">Logout ({{ current_user.username }})</a></li>
+            {% else %}
+              <li><a href="/login">Login</a></li>
+              <li><a href="/register">Register</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+      <h1>Analyze Product Reviews by URL</h1>
+      <form action="/analyze" method="POST">
+        <label for="product_url">Product URL (Amazon, Flipkart, etc.)</label>
+        <input type="url" id="product_url" name="product_url" placeholder="https://www.amazon.in/... or https://www.flipkart.com/..." required />
+
+        <label for="max_reviews">Max reviews to fetch</label>
+        <input type="number" id="max_reviews" name="max_reviews" value="30" min="1" max="200" />
+
+        <button type="submit">Analyze</button>
+      </form>
+    </div>
+
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2024 Fake Review Detector. All rights reserved.</p>
+        <p>VANITHA • VIKAS • AZMEER • SAIPRUSHNA</p>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+
